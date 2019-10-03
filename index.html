@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+<title>Polygon arrays</title>
+<style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 140px;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+      
+    </style>
+</head>
+<body>
+<div id="floating-panel">
+<input id="address" type="textbox" size="25" value="基隆市崇法街６４號">
+<input type="button" value="Check" onclick="codeAddress()">
+</div>
+<div id="map"></div>
+<script>
+      // This example requires the Geometry library. Include the libraries=geometry
+      // parameter when you first load the API. For example:
+      // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=geometry">
+      
+      var map;
+      var geocoder;
+      var testArea;
+
+      
+  function codeAddress() {
+    var address = document.getElementById("address").value;
+    geocoder.geocode( { 'address': address}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        map.setCenter(results[0].geometry.location);
+        var marker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location
+        });
+        
+        // check if position in polygon
+        if(google.maps.geometry.poly.containsLocation(results[0].geometry.location, testArea)){
+        	alert("在指定區域內");
+        }else{
+        	alert("不在指定區域內");
+        }
+        
+      } else {
+        alert("Geocode was not successful for the following reason: " + status);
+      }
+    });
+  }
+      
+
+      function initMap() {
+      	geocoder = new google.maps.Geocoder();
+        map = new google.maps.Map(document.getElementById('map'), {
+          // 25.037828, 121.547204
+          center: {lat: 25.13664, lng: 121.74827},
+          zoom: 16,
+        });
+
+        var testAreaCoords = [
+            {lat: 25.13664, lng: 121.74827},
+            {lat: 25.13594, lng: 121.74874},
+            {lat: 25.13462, lng: 121.74865},
+            {lat: 25.13359, lng: 121.74824},
+            {lat: 25.12937, lng: 121.7508},
+            {lat: 25.12955, lng: 121.74731},
+            {lat: 25.12973, lng: 121.7463},
+            {lat: 25.13059, lng: 121.74493},
+            {lat: 25.13093, lng: 121.74479},
+            {lat: 25.13173, lng: 121.74439},
+            {lat: 25.13169, lng: 121.74355},
+            {lat: 25.13295, lng: 121.74518},
+            {lat: 25.13413, lng: 121.74553},
+            {lat: 25.13483, lng: 121.74597},
+            {lat: 25.13512, lng: 121.7463},
+            {lat: 25.13544, lng: 121.74747},
+            {lat: 25.13607, lng: 121.74808}
+        ];
+
+
+
+        testArea = new google.maps.Polygon({
+        	paths: testAreaCoords,
+		    strokeColor: '#FF0000',
+		    strokeOpacity: 0.8,
+		    strokeWeight: 3,
+		    fillColor: '#FF0000',
+		    fillOpacity: 0.05
+        	
+        });
+        testArea.setMap(map);
+      }
+    </script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrOHHjQ8xg_X8om2bNF4e7s4QT5Vw5iRY&libraries=geometry&callback=initMap" async defer></script>
+</body>
+</html>
+
+
